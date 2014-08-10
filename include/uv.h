@@ -23,6 +23,12 @@
 
 #ifndef UV_H
 #define UV_H
+
+/* C++ headers */
+#ifdef __cplusplus
+#include <functional>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -395,10 +401,16 @@ UV_EXTERN int uv_backend_timeout(const uv_loop_t*);
  * Note that returning a zero-length buffer does not stop the handle, call
  * uv_read_stop() or uv_udp_recv_stop() for that.
  */
+#ifdef __cplusplus
+typedef std::function<void (uv_handle_t* handle,
+														size_t suggested_size,
+														uv_buf_t* buf)) > uv_alloc_cb;
+#else /* C */
 typedef void (*uv_alloc_cb)(uv_handle_t* handle,
                             size_t suggested_size,
                             uv_buf_t* buf);
-
+#endif
+	
 /*
  * `nread` is > 0 if there is data available, 0 if libuv is done reading for
  * now, or < 0 on error.
@@ -410,6 +422,36 @@ typedef void (*uv_alloc_cb)(uv_handle_t* handle,
  * The buffer may be a null buffer (where buf->base=NULL and buf->len=0) on
  * error.
  */
+#ifdef __cplusplus
+typedef std::function<void (uv_stream_t* stream,
+														ssize_t nread,
+														const uv_buf_t* buf) > uv_read_cb;
+typedef std::function<void (uv_write_t* req, int status) > uv_write_cb;
+typedef std::function<void (uv_connect_t* req, int status) > uv_connect_cb;
+typedef std::function<void (uv_shutdown_t* req, int status) > uv_shutdown_cb;
+typedef std::function<void (uv_stream_t* server, int status) > uv_connection_cb;
+typedef std::function<void (uv_handle_t* handle) > uv_close_cb;
+typedef std::function<void (uv_poll_t* handle, int status, int events) > uv_poll_cb;
+typedef std::function<void (uv_timer_t* handle) > uv_timer_cb;
+typedef std::function<void (uv_async_t* handle) > uv_async_cb;
+typedef std::function<void (uv_prepare_t* handle) > uv_prepare_cb;
+typedef std::function<void (uv_check_t* handle) > uv_check_cb;
+typedef std::function<void (uv_idle_t* handle) > uv_idle_cb;
+typedef std::function<void (uv_process_t*, int64_t exit_status, int term_signal) > uv_exit_cb;
+typedef std::function<void (uv_handle_t* handle, void* arg) > uv_walk_cb;
+typedef std::function<void (uv_fs_t* req) > uv_fs_cb;
+typedef std::function<void (uv_work_t* req) > uv_work_cb;
+typedef std::function<void (uv_work_t* req, int status) > uv_after_work_cb;
+
+typedef std::function<void (uv_getaddrinfo_t* req,
+														int status,
+														struct addrinfo* res) > uv_getaddrinfo_cb;
+
+typedef std::function<void (uv_getnameinfo_t* req,
+														int status,
+														const char* hostname,
+														const char* service) > uv_getnameinfo_cb;
+#else /* C */
 typedef void (*uv_read_cb)(uv_stream_t* stream,
                            ssize_t nread,
                            const uv_buf_t* buf);
@@ -436,7 +478,8 @@ typedef void (*uv_getnameinfo_cb)(uv_getnameinfo_t* req,
                                   int status,
                                   const char* hostname,
                                   const char* service);
-
+#endif
+	
 typedef struct {
   long tv_sec;
   long tv_nsec;
@@ -469,6 +512,17 @@ typedef struct {
 * will be a relative path to a file contained in the directory.
 * The events parameter is an ORed mask of enum uv_fs_event elements.
 */
+#ifdef __cplusplus
+typedef std::function<void (uv_fs_event_t* handle,
+														const char* filename,
+														int events,
+														int status) > uv_fs_event_cb;
+typedef std::function<void (uv_fs_poll_t* handle,
+														int status,
+														const uv_stat_t* prev,
+														const uv_stat_t* curr) > uv_fs_poll_cb;
+typedef std::function<void (uv_signal_t* handle, int signum) > uv_signal_cb;
+#else /* C */
 typedef void (*uv_fs_event_cb)(uv_fs_event_t* handle,
                                const char* filename,
                                int events,
@@ -480,7 +534,7 @@ typedef void (*uv_fs_poll_cb)(uv_fs_poll_t* handle,
                               const uv_stat_t* curr);
 
 typedef void (*uv_signal_cb)(uv_signal_t* handle, int signum);
-
+#endif
 
 typedef enum {
   UV_LEAVE_GROUP = 0,
@@ -882,8 +936,11 @@ enum uv_udp_flags {
 /*
  * Called after uv_udp_send(). status 0 indicates success otherwise error.
  */
+#ifdef __cplusplus
+typedef std::function<void (uv_udp_send_t* req, int status) > uv_udp_send_cb;
+#else /* C */
 typedef void (*uv_udp_send_cb)(uv_udp_send_t* req, int status);
-
+#endif
 /*
  * Callback that is invoked when a new UDP datagram is received.
  *
@@ -904,12 +961,19 @@ typedef void (*uv_udp_send_cb)(uv_udp_send_t* req, int status);
  *  there is nothing to read, and with nread == 0 and addr != NULL when an empty
  *  UDP packet is received.
  */
+#ifdef __cplusplus
+typedef std::function<void (uv_udp_t* handle,
+														ssize_t nread,
+														const uv_buf_t* buf,
+														const struct sockaddr* addr,
+														unsigned flags) > uv_udp_recv_cb;
+#else /* C */
 typedef void (*uv_udp_recv_cb)(uv_udp_t* handle,
                                ssize_t nread,
                                const uv_buf_t* buf,
                                const struct sockaddr* addr,
                                unsigned flags);
-
+#endif
 /* uv_udp_t is a subclass of uv_handle_t. */
 struct uv_udp_s {
   UV_HANDLE_FIELDS
@@ -2313,8 +2377,12 @@ UV_EXTERN void uv_key_set(uv_key_t* key, void* value);
  *
  * `arg` is the same value that was passed to uv_thread_create().
  */
+#ifdef __cplusplus
+typedef std::function<void (void* arg) > uv_thread_cb;
+#else /* C */
 typedef void (*uv_thread_cb)(void* arg);
-
+#endif
+	
 UV_EXTERN int uv_thread_create(uv_thread_t* tid, uv_thread_cb entry, void* arg);
 UV_EXTERN unsigned long uv_thread_self(void);
 UV_EXTERN int uv_thread_join(uv_thread_t *tid);
