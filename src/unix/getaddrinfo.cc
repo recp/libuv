@@ -88,7 +88,7 @@ int uv_getaddrinfo(uv_loop_t* loop,
   hostname_len = hostname ? strlen(hostname) + 1 : 0;
   service_len = service ? strlen(service) + 1 : 0;
   hints_len = hints ? sizeof(*hints) : 0;
-  buf = malloc(hostname_len + service_len + hints_len);
+  buf = (char *)malloc(hostname_len + service_len + hints_len);
 
   if (buf == NULL)
     return -ENOMEM;
@@ -106,17 +106,17 @@ int uv_getaddrinfo(uv_loop_t* loop,
   len = 0;
 
   if (hints) {
-    req->hints = memcpy(buf + len, hints, sizeof(*hints));
+    req->hints = (struct addrinfo *)memcpy(buf + len, hints, sizeof(*hints));
     len += sizeof(*hints);
   }
 
   if (service) {
-    req->service = memcpy(buf + len, service, service_len);
+    req->service = (char *)memcpy(buf + len, service, service_len);
     len += service_len;
   }
 
   if (hostname) {
-    req->hostname = memcpy(buf + len, hostname, hostname_len);
+    req->hostname = (char *)memcpy(buf + len, hostname, hostname_len);
     len += hostname_len;
   }
 

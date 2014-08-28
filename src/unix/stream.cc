@@ -103,7 +103,7 @@ static void uv__stream_osx_interrupt_select(uv_stream_t* stream) {
   uv__stream_select_t* s;
   int r;
 
-  s = stream->select;
+  s = (uv__stream_select_t *)stream->select;
   if (s == NULL)
     return;
 
@@ -134,8 +134,8 @@ static void uv__stream_osx_select(void* arg) {
   int r;
   int max_fd;
 
-  stream = arg;
-  s = stream->select;
+  stream = (uv_stream_t *)arg;
+  s = (uv__stream_select_t *)stream->select;
   fd = s->fd;
 
   if (fd > s->int_fd)
@@ -245,7 +245,6 @@ static void uv__stream_osx_cb_close(uv_handle_t* async) {
   free(s);
 }
 
-
 int uv__stream_try_select(uv_stream_t* stream, int* fd) {
   /*
    * kqueue doesn't work with some files from /dev mount on osx.
@@ -284,7 +283,7 @@ int uv__stream_try_select(uv_stream_t* stream, int* fd) {
     return 0;
 
   /* At this point we definitely know that this fd won't work with kqueue */
-  s = malloc(sizeof(*s));
+  s = (uv__stream_select_t *)malloc(sizeof(*s));
   if (s == NULL)
     return -ENOMEM;
 
@@ -545,7 +544,7 @@ done:
   if (server->queued_fds != NULL) {
     uv__stream_queued_fds_t* queued_fds;
 
-    queued_fds = server->queued_fds;
+    queued_fds = (uv__stream_queued_fds_t *)server->queued_fds;
 
     /* Read first */
     server->accepted_fd = queued_fds->fds[0];
@@ -754,7 +753,7 @@ start:
     /* silence aliasing warning */
     {
       void* pv = CMSG_DATA(cmsg);
-      int* pi = pv;
+      int* pi = (int *)pv;
       *pi = fd_to_send;
     }
 
@@ -924,10 +923,10 @@ static int uv__stream_queue_fd(uv_stream_t* stream, int fd) {
   uv__stream_queued_fds_t* queued_fds;
   unsigned int queue_size;
 
-  queued_fds = stream->queued_fds;
+  queued_fds = (uv__stream_queued_fds_t *)stream->queued_fds;
   if (queued_fds == NULL) {
     queue_size = 8;
-    queued_fds = malloc((queue_size - 1) * sizeof(*queued_fds->fds) +
+    queued_fds = (uv__stream_queued_fds_t *)malloc((queue_size - 1) * sizeof(*queued_fds->fds) +
                         sizeof(*queued_fds));
     if (queued_fds == NULL)
       return -ENOMEM;
@@ -938,7 +937,7 @@ static int uv__stream_queue_fd(uv_stream_t* stream, int fd) {
     /* Grow */
   } else if (queued_fds->size == queued_fds->offset) {
     queue_size = queued_fds->size + 8;
-    queued_fds = realloc(queued_fds,
+    queued_fds = (uv__stream_queued_fds_t *)realloc(queued_fds,
                          (queue_size - 1) * sizeof(*queued_fds->fds) +
                              sizeof(*queued_fds));
 
@@ -983,7 +982,7 @@ static int uv__stream_recv_cmsg(uv_stream_t* stream, struct msghdr* msg) {
 
     /* silence aliasing warning */
     pv = CMSG_DATA(cmsg);
-    pi = pv;
+    pi = (int *)pv;
 
     /* Count available fds */
     start = (char*) cmsg;
@@ -1289,7 +1288,7 @@ int uv_write2(uv_write_t* req,
 
   req->bufs = req->bufsml;
   if (nbufs > ARRAY_SIZE(req->bufsml))
-    req->bufs = malloc(nbufs * sizeof(bufs[0]));
+    req->bufs = (uv_buf_t *)malloc(nbufs * sizeof(bufs[0]));
 
   if (req->bufs == NULL)
     return -ENOMEM;
@@ -1466,7 +1465,7 @@ int uv___stream_fd(const uv_stream_t* handle) {
          handle->type == UV_TTY ||
          handle->type == UV_NAMED_PIPE);
 
-  s = handle->select;
+  s = (uv__stream_select_t *)handle->select;
   if (s != NULL)
     return s->fd;
 
@@ -1484,7 +1483,7 @@ void uv__stream_close(uv_stream_t* handle) {
   if (handle->select != NULL) {
     uv__stream_select_t* s;
 
-    s = handle->select;
+    s = (uv__stream_select_t *)handle->select;
 
     uv_sem_post(&s->close_sem);
     uv_sem_post(&s->async_sem);
@@ -1518,7 +1517,7 @@ void uv__stream_close(uv_stream_t* handle) {
 
   /* Close all queued fds */
   if (handle->queued_fds != NULL) {
-    queued_fds = handle->queued_fds;
+    queued_fds = (uv__stream_queued_fds_t *)handle->queued_fds;
     for (i = 0; i < queued_fds->offset; i++)
       uv__close(queued_fds->fds[i]);
     free(handle->queued_fds);

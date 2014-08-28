@@ -168,7 +168,7 @@ static void uv__udp_recvmsg(uv_udp_t* handle) {
     assert(buf.base != NULL);
 
     h.msg_namelen = sizeof(peer);
-    h.msg_iov = (void*) &buf;
+    h.msg_iov = (struct iovec *)&buf;
     h.msg_iovlen = 1;
 
     do {
@@ -348,7 +348,7 @@ static int uv__udp_maybe_deferred_bind(uv_udp_t* handle,
   switch (domain) {
   case AF_INET:
   {
-    struct sockaddr_in* addr = (void*)&taddr;
+    struct sockaddr_in* addr = (struct sockaddr_in *)&taddr;
     memset(addr, 0, sizeof *addr);
     addr->sin_family = AF_INET;
     addr->sin_addr.s_addr = INADDR_ANY;
@@ -357,7 +357,7 @@ static int uv__udp_maybe_deferred_bind(uv_udp_t* handle,
   }
   case AF_INET6:
   {
-    struct sockaddr_in6* addr = (void*)&taddr;
+    struct sockaddr_in6* addr = (struct sockaddr_in6 *)&taddr;
     memset(addr, 0, sizeof *addr);
     addr->sin6_family = AF_INET6;
     addr->sin6_addr = in6addr_any;
@@ -404,7 +404,7 @@ int uv__udp_send(uv_udp_send_t* req,
 
   req->bufs = req->bufsml;
   if (nbufs > ARRAY_SIZE(req->bufsml))
-    req->bufs = malloc(nbufs * sizeof(bufs[0]));
+    req->bufs = (uv_buf_t *)malloc(nbufs * sizeof(bufs[0]));
 
   if (req->bufs == NULL)
     return -ENOMEM;

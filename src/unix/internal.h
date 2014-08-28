@@ -52,6 +52,10 @@
 # include <CoreServices/CoreServices.h>
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+	
 #define STATIC_ASSERT(expr)                                                   \
   void uv__static_assert(int static_assert_failed[1 - 2 * !(expr)])
 
@@ -314,4 +318,8 @@ UV_UNUSED(static char* uv__basename_r(const char* path)) {
 #define UV_TICK_STOP(arg0, arg1)
 #endif
 
+#ifdef __cplusplus
+}
+#endif
+		
 #endif /* UV_UNIX_INTERNAL_H_ */

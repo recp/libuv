@@ -26,7 +26,7 @@
 
 #ifndef UV_COMMON_H_
 #define UV_COMMON_H_
-
+	
 #include <assert.h>
 #include <stddef.h>
 
@@ -40,6 +40,10 @@
 #include "tree.h"
 #include "queue.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+	
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 
 #define container_of(ptr, type, member) \
@@ -199,4 +203,8 @@ size_t uv__count_bufs(const uv_buf_t bufs[], unsigned int nbufs);
   }                                                                           \
   while (0)
 
+#ifdef __cplusplus
+}
+#endif
+		
 #endif /* UV_COMMON_H_ */

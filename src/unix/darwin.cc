@@ -77,7 +77,7 @@ int uv_exepath(char* buffer, size_t* size) {
   result = _NSGetExecutablePath(buffer, &usize);
   if (result) return result;
 
-  path = malloc(2 * PATH_MAX);
+  path = (char *)malloc(2 * PATH_MAX);
   fullpath = realpath(buffer, path);
   if (fullpath == NULL) {
     SAVE_ERRNO(free(path));
@@ -193,7 +193,7 @@ int uv_cpu_info(uv_cpu_info_t** cpu_infos, int* count) {
     return -EINVAL;  /* FIXME(bnoordhuis) Translate error. */
   }
 
-  *cpu_infos = malloc(numcpus * sizeof(**cpu_infos));
+  *cpu_infos = (uv_cpu_info_t *)malloc(numcpus * sizeof(**cpu_infos));
   if (!(*cpu_infos))
     return -ENOMEM;  /* FIXME(bnoordhuis) Deallocate info? */
 
@@ -250,7 +250,7 @@ int uv_interface_addresses(uv_interface_address_t** addresses, int* count) {
     (*count)++;
   }
 
-  *addresses = malloc(*count * sizeof(**addresses));
+  *addresses = (uv_interface_address_t *)malloc(*count * sizeof(**addresses));
   if (!(*addresses))
     return -ENOMEM;
 

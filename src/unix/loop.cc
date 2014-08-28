@@ -74,7 +74,7 @@ int uv_loop_close(uv_loop_t* loop) {
 uv_loop_t* uv_loop_new(void) {
   uv_loop_t* loop;
 
-  loop = malloc(sizeof(*loop));
+  loop = (uv_loop_t *)malloc(sizeof(*loop));
   if (loop == NULL)
     return NULL;
 

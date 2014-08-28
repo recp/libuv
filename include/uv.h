@@ -404,7 +404,7 @@ UV_EXTERN int uv_backend_timeout(const uv_loop_t*);
 #ifdef __cplusplus
 typedef std::function<void (uv_handle_t* handle,
 														size_t suggested_size,
-														uv_buf_t* buf)) > uv_alloc_cb;
+														uv_buf_t* buf) > uv_alloc_cb;
 #else /* C */
 typedef void (*uv_alloc_cb)(uv_handle_t* handle,
                             size_t suggested_size,

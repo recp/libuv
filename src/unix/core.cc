@@ -681,15 +681,15 @@ static void maybe_resize(uv_loop_t* loop, unsigned int len) {
   }
 
   nwatchers = next_power_of_two(len + 2) - 2;
-  watchers = realloc(loop->watchers,
+  watchers = (uv__io_t **)realloc(loop->watchers,
                      (nwatchers + 2) * sizeof(loop->watchers[0]));
 
   if (watchers == NULL)
     abort();
   for (i = loop->nwatchers; i < nwatchers; i++)
     watchers[i] = NULL;
-  watchers[nwatchers] = fake_watcher_list;
-  watchers[nwatchers + 1] = fake_watcher_count;
+  watchers[nwatchers] = (uv__io_t *)fake_watcher_list;
+  watchers[nwatchers + 1] = (uv__io_t *)fake_watcher_count;
 
   loop->watchers = watchers;
   loop->nwatchers = nwatchers;

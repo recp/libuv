@@ -272,7 +272,7 @@ int uv_udp_recv_stop(uv_udp_t* handle) {
 
 
 struct thread_ctx {
-  void (*entry)(void* arg);
+  uv_thread_cb entry;
   void* arg;
 };
 
@@ -286,7 +286,7 @@ static void* uv__thread_start(void *arg)
   struct thread_ctx *ctx_p;
   struct thread_ctx ctx;
 
-  ctx_p = arg;
+  ctx_p = (thread_ctx *)arg;
   ctx = *ctx_p;
   free(ctx_p);
   ctx.entry(ctx.arg);
@@ -294,12 +294,11 @@ static void* uv__thread_start(void *arg)
   return 0;
 }
 
-
-int uv_thread_create(uv_thread_t *tid, void (*entry)(void *arg), void *arg) {
+int uv_thread_create(uv_thread_t *tid, uv_thread_cb entry, void *arg) {
   struct thread_ctx* ctx;
   int err;
 
-  ctx = malloc(sizeof(*ctx));
+  ctx = (thread_ctx *)malloc(sizeof(*ctx));
   if (ctx == NULL)
     return UV_ENOMEM;
 

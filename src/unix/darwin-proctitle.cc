@@ -36,7 +36,7 @@ static int uv__pthread_setname_np(const char* name) {
   int err;
 
   /* pthread_setname_np() first appeared in OS X 10.6 and iOS 3.2. */
-  dynamic_pthread_setname_np = dlsym(RTLD_DEFAULT, "pthread_setname_np");
+  dynamic_pthread_setname_np = (int (*)(const char *))dlsym(RTLD_DEFAULT, "pthread_setname_np");
   if (dynamic_pthread_setname_np == NULL)
     return -ENOSYS;
 
@@ -95,13 +95,15 @@ int uv__set_process_title(const char* title) {
     goto out;
 
   pCFStringCreateWithCString =
-      dlsym(core_foundation_handle, "CFStringCreateWithCString");
+	(CFStringRef (*)(CFAllocatorRef,
+								const char*,
+								 CFStringEncoding))dlsym(core_foundation_handle, "CFStringCreateWithCString");
   pCFBundleGetBundleWithIdentifier =
-      dlsym(core_foundation_handle, "CFBundleGetBundleWithIdentifier");
+      (CFBundleRef (*)(CFStringRef))dlsym(core_foundation_handle, "CFBundleGetBundleWithIdentifier");
   pCFBundleGetDataPointerForName =
-      dlsym(core_foundation_handle, "CFBundleGetDataPointerForName");
+      (void *(*)(CFBundleRef, CFStringRef))dlsym(core_foundation_handle, "CFBundleGetDataPointerForName");
   pCFBundleGetFunctionPointerForName =
-      dlsym(core_foundation_handle, "CFBundleGetFunctionPointerForName");
+      (void *(*)(CFBundleRef, CFStringRef))dlsym(core_foundation_handle, "CFBundleGetFunctionPointerForName");
 
   if (pCFStringCreateWithCString == NULL ||
       pCFBundleGetBundleWithIdentifier == NULL ||
@@ -119,28 +121,34 @@ int uv__set_process_title(const char* title) {
     goto out;
 
   pLSGetCurrentApplicationASN =
-      pCFBundleGetFunctionPointerForName(launch_services_bundle,
+      (CFTypeRef (*)(void))pCFBundleGetFunctionPointerForName(launch_services_bundle,
                                          S("_LSGetCurrentApplicationASN"));
 
   if (pLSGetCurrentApplicationASN == NULL)
     goto out;
 
   pLSSetApplicationInformationItem =
-      pCFBundleGetFunctionPointerForName(launch_services_bundle,
+	(OSStatus (*)(int,
+							CFTypeRef,
+							CFStringRef,
+							CFStringRef,
+							CFDictionaryRef*))pCFBundleGetFunctionPointerForName(launch_services_bundle,
                                          S("_LSSetApplicationInformationItem"));
 
   if (pLSSetApplicationInformationItem == NULL)
     goto out;
 
-  display_name_key = pCFBundleGetDataPointerForName(launch_services_bundle,
+  display_name_key =
+	(CFStringRef *)pCFBundleGetDataPointerForName(launch_services_bundle,
                                                     S("_kLSDisplayNameKey"));
 
   if (display_name_key == NULL || *display_name_key == NULL)
     goto out;
 
-  pCFBundleGetInfoDictionary = dlsym(core_foundation_handle,
+  pCFBundleGetInfoDictionary =
+	  (CFDictionaryRef (*)(CFBundleRef))dlsym(core_foundation_handle,
                                      "CFBundleGetInfoDictionary");
-  pCFBundleGetMainBundle = dlsym(core_foundation_handle,
+  pCFBundleGetMainBundle = (CFBundleRef (*)(void))dlsym(core_foundation_handle,
                                  "CFBundleGetMainBundle");
   if (pCFBundleGetInfoDictionary == NULL || pCFBundleGetMainBundle == NULL)
     goto out;
@@ -152,14 +160,16 @@ int uv__set_process_title(const char* title) {
   if (hi_services_bundle == NULL)
     goto out;
 
-  pSetApplicationIsDaemon = pCFBundleGetFunctionPointerForName(
+  pSetApplicationIsDaemon =
+	(OSStatus (*)(int))pCFBundleGetFunctionPointerForName(
       hi_services_bundle,
       S("SetApplicationIsDaemon"));
-  pLSApplicationCheckIn = pCFBundleGetFunctionPointerForName(
+  pLSApplicationCheckIn =
+	(CFDictionaryRef (*)(int, CFDictionaryRef))pCFBundleGetFunctionPointerForName(
       launch_services_bundle,
       S("_LSApplicationCheckIn"));
   pLSSetApplicationLaunchServicesServerConnectionStatus =
-      pCFBundleGetFunctionPointerForName(
+	(void (*)(uint64_t, void*))pCFBundleGetFunctionPointerForName(
           launch_services_bundle,
           S("_LSSetApplicationLaunchServicesServerConnectionStatus"));
   if (pSetApplicationIsDaemon == NULL ||

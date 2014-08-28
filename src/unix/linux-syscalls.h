@@ -31,6 +31,10 @@
 #include <sys/time.h>
 #include <sys/socket.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+	
 #if defined(__alpha__)
 # define UV__O_CLOEXEC        0x200000
 #elif defined(__hppa__)
@@ -151,4 +155,8 @@ ssize_t uv__preadv(int fd, const struct iovec *iov, int iovcnt, off_t offset);
 ssize_t uv__pwritev(int fd, const struct iovec *iov, int iovcnt, off_t offset);
 int uv__dup3(int oldfd, int newfd, int flags);
 
+#ifdef __cplusplus
+}
+#endif
+		
 #endif /* UV_LINUX_SYSCALL_H_ */

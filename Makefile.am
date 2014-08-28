@@ -23,15 +23,16 @@ CLEANFILES =
 
 lib_LTLIBRARIES = libuv.la
 libuv_la_CFLAGS = @CFLAGS@
+libuv_la_CXXFLAGS = -std=c++11
 libuv_la_LDFLAGS = -no-undefined -version-info 11:0:0
-libuv_la_SOURCES = src/fs-poll.c \
+libuv_la_SOURCES = src/fs-poll.cc \
                    src/heap-inl.h \
-                   src/inet.c \
+                   src/inet.cc \
                    src/queue.h \
-                   src/threadpool.c \
-                   src/uv-common.c \
+                   src/threadpool.cc \
+                   src/uv-common.cc \
                    src/uv-common.h \
-                   src/version.c
+                   src/version.cc
 
 if SUNOS
 libuv_la_CFLAGS += -pthread
@@ -44,64 +45,64 @@ AM_CPPFLAGS += -I$(top_srcdir)/src/win \
                -DWIN32_LEAN_AND_MEAN \
                -D_WIN32_WINNT=0x0600
 LIBS += -lws2_32 -lpsapi -liphlpapi -lshell32
-libuv_la_SOURCES += src/win/async.c \
+libuv_la_SOURCES += src/win/async.cc \
                     src/win/atomicops-inl.h \
-                    src/win/core.c \
-                    src/win/dl.c \
-                    src/win/error.c \
-                    src/win/fs-event.c \
-                    src/win/fs.c \
-                    src/win/getaddrinfo.c \
-                    src/win/getnameinfo.c \
-                    src/win/handle.c \
+                    src/win/core.cc \
+                    src/win/dl.cc \
+                    src/win/error.cc \
+                    src/win/fs-event.cc \
+                    src/win/fs.cc \
+                    src/win/getaddrinfo.cc \
+                    src/win/getnameinfo.cc \
+                    src/win/handle.cc \
                     src/win/handle-inl.h \
                     src/win/internal.h \
-                    src/win/loop-watcher.c \
-                    src/win/pipe.c \
-                    src/win/poll.c \
-                    src/win/process-stdio.c \
-                    src/win/process.c \
-                    src/win/req.c \
+                    src/win/loop-watcher.cc \
+                    src/win/pipe.cc \
+                    src/win/poll.cc \
+                    src/win/process-stdio.cc \
+                    src/win/process.cc \
+                    src/win/req.cc \
                     src/win/req-inl.h \
-                    src/win/signal.c \
-                    src/win/stream.c \
+                    src/win/signal.cc \
+                    src/win/stream.cc \
                     src/win/stream-inl.h \
-                    src/win/tcp.c \
-                    src/win/thread.c \
-                    src/win/timer.c \
-                    src/win/tty.c \
-                    src/win/udp.c \
-                    src/win/util.c \
-                    src/win/winapi.c \
+                    src/win/tcp.cc \
+                    src/win/thread.cc \
+                    src/win/timer.cc \
+                    src/win/tty.cc \
+                    src/win/udp.cc \
+                    src/win/util.cc \
+                    src/win/winapi.cc \
                     src/win/winapi.h \
-                    src/win/winsock.c \
+                    src/win/winsock.cc \
                     src/win/winsock.h
 
 else  # WINNT
 
 include_HEADERS += include/uv-unix.h
 AM_CPPFLAGS += -I$(top_srcdir)/src/unix
-libuv_la_SOURCES += src/unix/async.c \
+libuv_la_SOURCES += src/unix/async.cc \
                    src/unix/atomic-ops.h \
-                   src/unix/core.c \
-                   src/unix/dl.c \
-                   src/unix/fs.c \
-                   src/unix/getaddrinfo.c \
-                   src/unix/getnameinfo.c \
+                   src/unix/core.cc \
+                   src/unix/dl.cc \
+                   src/unix/fs.cc \
+                   src/unix/getaddrinfo.cc \
+                   src/unix/getnameinfo.cc \
                    src/unix/internal.h \
-                   src/unix/loop-watcher.c \
-                   src/unix/loop.c \
-                   src/unix/pipe.c \
-                   src/unix/poll.c \
-                   src/unix/process.c \
-                   src/unix/signal.c \
+                   src/unix/loop-watcher.cc \
+                   src/unix/loop.cc \
+                   src/unix/pipe.cc \
+                   src/unix/poll.cc \
+                   src/unix/process.cc \
+                   src/unix/signal.cc \
                    src/unix/spinlock.h \
-                   src/unix/stream.c \
-                   src/unix/tcp.c \
-                   src/unix/thread.c \
-                   src/unix/timer.c \
-                   src/unix/tty.c \
-                   src/unix/udp.c
+                   src/unix/stream.cc \
+                   src/unix/tcp.cc \
+                   src/unix/thread.cc \
+                   src/unix/timer.cc \
+                   src/unix/tty.cc \
+                   src/unix/udp.cc
 
 endif  # WINNT
 
@@ -240,54 +241,54 @@ endif
 
 if AIX
 libuv_la_CFLAGS += -D_ALL_SOURCE -D_XOPEN_SOURCE=500 -D_LINUX_SOURCE_COMPAT
-libuv_la_SOURCES += src/unix/aix.c
+libuv_la_SOURCES += src/unix/aix.cc
 endif
 
 if ANDROID
 include_HEADERS += include/android-ifaddrs.h \
                    include/pthread-fixes.h
-libuv_la_SOURCES += src/unix/android-ifaddrs.c \
-                    src/unix/pthread-fixes.c
+libuv_la_SOURCES += src/unix/android-ifaddrs.cc \
+                    src/unix/pthread-fixes.cc
 endif
 
 if DARWIN
 include_HEADERS += include/uv-darwin.h
 libuv_la_CFLAGS += -D_DARWIN_USE_64_BIT_INODE=1
-libuv_la_SOURCES += src/unix/darwin.c \
-                    src/unix/darwin-proctitle.c \
-                    src/unix/fsevents.c \
-                    src/unix/kqueue.c \
-                    src/unix/proctitle.c
+libuv_la_SOURCES += src/unix/darwin.cc \
+                    src/unix/darwin-proctitle.cc \
+                    src/unix/fsevents.cc \
+                    src/unix/kqueue.cc \
+                    src/unix/proctitle.cc
 endif
 
 if FREEBSD
 include_HEADERS += include/uv-bsd.h
-libuv_la_SOURCES += src/unix/freebsd.c src/unix/kqueue.c
+libuv_la_SOURCES += src/unix/freebsd.cc src/unix/kqueue.cc
 endif
 
 if LINUX
 include_HEADERS += include/uv-linux.h
-libuv_la_SOURCES += src/unix/linux-core.c \
-                    src/unix/linux-inotify.c \
-                    src/unix/linux-syscalls.c \
+libuv_la_SOURCES += src/unix/linux-core.cc \
+                    src/unix/linux-inotify.cc \
+                    src/unix/linux-syscalls.cc \
                     src/unix/linux-syscalls.h \
-                    src/unix/proctitle.c
+                    src/unix/proctitle.cc
 endif
 
 if NETBSD
 include_HEADERS += include/uv-bsd.h
-libuv_la_SOURCES += src/unix/kqueue.c src/unix/netbsd.c
+libuv_la_SOURCES += src/unix/kqueue.cc src/unix/netbsd.cc
 endif
 
 if OPENBSD
 include_HEADERS += include/uv-bsd.h
-libuv_la_SOURCES += src/unix/kqueue.c src/unix/openbsd.c
+libuv_la_SOURCES += src/unix/kqueue.cc src/unix/openbsd.cc
 endif
 
 if SUNOS
 include_HEADERS += include/uv-sunos.h
 libuv_la_CFLAGS += -D__EXTENSIONS__ -D_XOPEN_SOURCE=500
-libuv_la_SOURCES += src/unix/sunos.c
+libuv_la_SOURCES += src/unix/sunos.cc
 endif
 
 if HAVE_DTRACE

@@ -391,7 +391,7 @@ int uv_spawn(uv_loop_t* loop,
     stdio_count = 3;
 
   err = -ENOMEM;
-  pipes = malloc(stdio_count * sizeof(*pipes));
+  pipes = (int (*)[2])malloc(stdio_count * sizeof(*pipes));
   if (pipes == NULL)
     goto error;
 
