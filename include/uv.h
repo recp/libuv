@@ -403,8 +403,8 @@ UV_EXTERN int uv_backend_timeout(const uv_loop_t*);
  */
 #ifdef __cplusplus
 typedef std::function<void (uv_handle_t* handle,
-														size_t suggested_size,
-														uv_buf_t* buf) > uv_alloc_cb;
+                            size_t suggested_size,
+                            uv_buf_t* buf) > uv_alloc_cb;
 #else /* C */
 typedef void (*uv_alloc_cb)(uv_handle_t* handle,
                             size_t suggested_size,
@@ -424,8 +424,8 @@ typedef void (*uv_alloc_cb)(uv_handle_t* handle,
  */
 #ifdef __cplusplus
 typedef std::function<void (uv_stream_t* stream,
-														ssize_t nread,
-														const uv_buf_t* buf) > uv_read_cb;
+                           ssize_t nread,
+                           const uv_buf_t* buf) > uv_read_cb;
 typedef std::function<void (uv_write_t* req, int status) > uv_write_cb;
 typedef std::function<void (uv_connect_t* req, int status) > uv_connect_cb;
 typedef std::function<void (uv_shutdown_t* req, int status) > uv_shutdown_cb;
@@ -442,15 +442,13 @@ typedef std::function<void (uv_handle_t* handle, void* arg) > uv_walk_cb;
 typedef std::function<void (uv_fs_t* req) > uv_fs_cb;
 typedef std::function<void (uv_work_t* req) > uv_work_cb;
 typedef std::function<void (uv_work_t* req, int status) > uv_after_work_cb;
-
 typedef std::function<void (uv_getaddrinfo_t* req,
-														int status,
-														struct addrinfo* res) > uv_getaddrinfo_cb;
-
+                                  int status,
+                                  struct addrinfo* res) > uv_getaddrinfo_cb;
 typedef std::function<void (uv_getnameinfo_t* req,
-														int status,
-														const char* hostname,
-														const char* service) > uv_getnameinfo_cb;
+                                  int status,
+                                  const char* hostname,
+                                  const char* service) > uv_getnameinfo_cb;
 #else /* C */
 typedef void (*uv_read_cb)(uv_stream_t* stream,
                            ssize_t nread,
@@ -514,13 +512,13 @@ typedef struct {
 */
 #ifdef __cplusplus
 typedef std::function<void (uv_fs_event_t* handle,
-														const char* filename,
-														int events,
-														int status) > uv_fs_event_cb;
+                               const char* filename,
+                               int events,
+                               int status) > uv_fs_event_cb;
 typedef std::function<void (uv_fs_poll_t* handle,
-														int status,
-														const uv_stat_t* prev,
-														const uv_stat_t* curr) > uv_fs_poll_cb;
+                               int status,
+                               const uv_stat_t* prev,
+                               const uv_stat_t* curr) > uv_fs_poll_cb;
 typedef std::function<void (uv_signal_t* handle, int signum) > uv_signal_cb;
 #else /* C */
 typedef void (*uv_fs_event_cb)(uv_fs_event_t* handle,
@@ -963,10 +961,10 @@ typedef void (*uv_udp_send_cb)(uv_udp_send_t* req, int status);
  */
 #ifdef __cplusplus
 typedef std::function<void (uv_udp_t* handle,
-														ssize_t nread,
-														const uv_buf_t* buf,
-														const struct sockaddr* addr,
-														unsigned flags) > uv_udp_recv_cb;
+                               ssize_t nread,
+                               const uv_buf_t* buf,
+                               const struct sockaddr* addr,
+                               unsigned flags) > uv_udp_recv_cb;
 #else /* C */
 typedef void (*uv_udp_recv_cb)(uv_udp_t* handle,
                                ssize_t nread,

@@ -102,50 +102,45 @@ static int uv__cf_loop_signal(uv_loop_t* loop, uv_fs_event_t* handle);
 
 /* Lazy-loaded by uv__fsevents_global_init(). */
 typedef CFArrayRef (*pCFArrayCreate_t)(CFAllocatorRef,
-											const void**,
-											CFIndex,
-											const CFArrayCallBacks*);
+                                   const void**,
+                                   CFIndex,
+                                   const CFArrayCallBacks*);
 typedef void (*pCFRelease_t)(CFTypeRef);
 typedef void (*pCFRunLoopAddSource_t)(CFRunLoopRef,
-									  CFRunLoopSourceRef,
-									  CFStringRef);
+                                   CFRunLoopSourceRef,
+                                   CFStringRef);
 typedef CFRunLoopRef (*pCFRunLoopGetCurrent_t)(void);
 typedef void (*pCFRunLoopRemoveSource_t)(CFRunLoopRef,
-									  CFRunLoopSourceRef,
-									  CFStringRef);
+                                   CFRunLoopSourceRef,
+                                   CFStringRef);
 typedef void (*pCFRunLoopRun_t)(void);
 typedef CFRunLoopSourceRef (*pCFRunLoopSourceCreate_t)(CFAllocatorRef,
-													CFIndex,
-													CFRunLoopSourceContext*);
+                                   CFIndex,
+                                   CFRunLoopSourceContext*);
 typedef void (*pCFRunLoopSourceSignal_t)(CFRunLoopSourceRef);
 typedef void (*pCFRunLoopStop_t)(CFRunLoopRef);
 typedef void (*pCFRunLoopWakeUp_t)(CFRunLoopRef);
 typedef CFStringRef (*pCFStringCreateWithFileSystemRepresentation_t)(
-																  CFAllocatorRef,
-																  const char*);
+                                   CFAllocatorRef,
+                                   const char*);
 typedef CFStringEncoding (*pCFStringGetSystemEncoding_t)(void);
 typedef CFStringRef (*pkCFRunLoopDefaultMode_t);
 
-
-
 typedef FSEventStreamRef (*pFSEventStreamCreate_t)(CFAllocatorRef,
-												FSEventStreamCallback,
-												FSEventStreamContext*,
-												CFArrayRef,
-												FSEventStreamEventId,
-												CFTimeInterval,
-												FSEventStreamCreateFlags);
+                                   FSEventStreamCallback,
+                                   FSEventStreamContext*,
+                                   CFArrayRef,
+                                   FSEventStreamEventId,
+                                   CFTimeInterval,
+                                   FSEventStreamCreateFlags);
 typedef void (*pFSEventStreamFlushSync_t)(FSEventStreamRef);
 typedef void (*pFSEventStreamInvalidate_t)(FSEventStreamRef);
 typedef void (*pFSEventStreamRelease_t)(FSEventStreamRef);
 typedef void (*pFSEventStreamScheduleWithRunLoop_t)(FSEventStreamRef,
-												 CFRunLoopRef,
-												 CFStringRef);
+                                   CFRunLoopRef,
+                                   CFStringRef);
 typedef Boolean (*pFSEventStreamStart_t)(FSEventStreamRef);
 typedef void (*pFSEventStreamStop_t)(FSEventStreamRef);
-
-
-
 
 
 static pCFArrayCreate_t pCFArrayCreate;
