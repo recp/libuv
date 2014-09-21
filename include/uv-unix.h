@@ -318,7 +318,8 @@ typedef struct {
   void* heap_node[3];                                                         \
   uint64_t timeout;                                                           \
   uint64_t repeat;                                                            \
-  uint64_t start_id;
+  uint64_t start_id;                                                          \
+  int fired_count;
 
 #define UV_GETADDRINFO_PRIVATE_FIELDS                                         \
   struct uv__work work_req;                                                   \

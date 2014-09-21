@@ -313,7 +313,7 @@ int uv_run(uv_loop_t* loop, uv_run_mode mode) {
     UV_TICK_START(loop, mode);
 
     uv__update_time(loop);
-    uv__run_timers(loop);
+    uv__run_timers(loop, mode);
     uv__run_pending(loop);
     uv__run_idle(loop);
     uv__run_prepare(loop);
@@ -336,7 +336,7 @@ int uv_run(uv_loop_t* loop, uv_run_mode mode) {
        * the check.
        */
       uv__update_time(loop);
-      uv__run_timers(loop);
+      uv__run_timers(loop, mode);
     }
 
     r = uv__loop_alive(loop);

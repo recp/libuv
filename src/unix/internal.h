@@ -208,7 +208,7 @@ int uv__tcp_keepalive(int fd, int on, unsigned int delay);
 int uv_pipe_listen(uv_pipe_t* handle, int backlog, uv_connection_cb cb);
 
 /* timer */
-void uv__run_timers(uv_loop_t* loop);
+void uv__run_timers(uv_loop_t* loop, uv_run_mode run_mode);
 int uv__next_timeout(const uv_loop_t* loop);
 
 /* signal */

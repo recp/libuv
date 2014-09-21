@@ -147,7 +147,7 @@ int uv__next_timeout(const uv_loop_t* loop) {
 }
 
 
-void uv__run_timers(uv_loop_t* loop) {
+void uv__run_timers(uv_loop_t* loop, uv_run_mode run_mode) {
   struct heap_node* heap_node;
   uv_timer_t* handle;
 
@@ -160,9 +160,13 @@ void uv__run_timers(uv_loop_t* loop) {
     if (handle->timeout > loop->time)
       break;
 
+    if ((run_mode & (UV_RUN_ONCE | UV_RUN_NOWAIT)) && handle->fired_count > 0)
+      break;
+		
     uv_timer_stop(handle);
     uv_timer_again(handle);
     handle->timer_cb(handle);
+    handle->fired_count++;
   }
 }
 
